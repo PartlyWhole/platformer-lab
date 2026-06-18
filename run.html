@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pygame runner</title>
+<style>
+  :root { --bg:#0a0c16; --panel:#11210f; --edge:#2f6a44; --text:#d8dae5; --dim:#6a7290;
+          --accent:#9be88f; --warn:#ffd166; --bad:#ff6e7f; }
+  * { box-sizing:border-box; }
+  html,body { height:100%; margin:0; }
+  body { background:var(--bg); color:var(--text);
+         font:13px/1.45 'JetBrains Mono',ui-monospace,Menlo,monospace;
+         display:flex; flex-direction:column; }
+  header { display:flex; align-items:center; gap:10px; padding:7px 12px;
+           background:var(--panel); border-bottom:2px solid var(--edge); flex:0 0 auto; }
+  button { background:#0d1322; color:var(--text); border:1px solid var(--edge);
+           border-radius:4px; padding:5px 11px; font:inherit; cursor:pointer; }
+  button:hover { border-color:#4a8f63; }
+  #runBtn { color:#b8f0c6; }
+  #stopBtn { color:#f3b0ba; border-color:#5a2f2f; }
+  #status { margin-left:auto; font-size:11.5px; color:var(--dim);
+            padding:3px 9px; border-radius:99px; background:#0d1322; border:1px solid var(--edge); }
+  #status.running { color:var(--accent); } #status.error { color:var(--bad); } #status.boot { color:var(--warn); }
+  main { flex:1 1 0; display:flex; min-height:0; }
+  /* Canvas (visualizer) on the LEFT, editable code on the RIGHT — ordered via flex `order`. */
+  #editorPane { order:2; flex:1 1 46%; min-width:240px; display:flex; border-left:2px solid var(--edge); }
+  #code { flex:1; width:100%; resize:none; border:0; outline:none; background:#0b0e16; color:#e6ebf7;
+          padding:10px 12px; font:13px/1.55 'JetBrains Mono',ui-monospace,Menlo,monospace;
+          tab-size:4; -moz-tab-size:4; white-space:pre; overflow:auto; }
+  #code:focus { background:#0c1018; }
+  #rightPane { order:1; flex:1 1 54%; min-width:260px; display:flex; flex-direction:column; min-height:0; }
+  #stage { flex:1 1 auto; display:flex; align-items:center; justify-content:center;
+           overflow:auto; background:#070810; padding:12px; }
+  #canvas { background:#000; outline:none; border:1px solid var(--edge); border-radius:4px;
+            image-rendering:pixelated; max-width:100%; }
+  #canvas:focus { border-color:var(--accent); }
+  #console { flex:0 0 84px; overflow-y:auto; background:#070810; border-top:1px solid var(--edge);
+             padding:7px 11px; font-size:11.5px; white-space:pre-wrap; }
+  #console .err { color:var(--bad); } #console .sys { color:var(--dim); font-style:italic; }
+  .hint { color:var(--dim); font-size:11px; }
+  @media (max-width:560px) { main { flex-direction:column; } #editorPane { border-left:0; border-top:2px solid var(--edge); } }
+</style>
+</head>
+<body>
+<header>
+  <button id="runBtn" title="Run (⌘/Ctrl+Enter)">▶ Run</button>
+  <button id="stopBtn" title="Stop the program">■ Stop</button>
+  <span class="hint">edit freely · ⌘/Ctrl+↵ runs · click canvas for keyboard</span>
+  <span id="status" class="boot">starting…</span>
+</header>
+<main>
+  <div id="editorPane"><textarea id="code" spellcheck="false" autocomplete="off"></textarea></div>
+  <div id="rightPane">
+    <div id="stage"><canvas id="canvas" width="480" height="360" tabindex="0"></canvas></div>
+    <div id="console"></div>
+  </div>
+</main>
+
+<script>
+// ---- the pygame backend, lifted verbatim from the pygame-playground engine ----
+const BOOT_PY = String.raw`
+import os, ast, asyncio, traceback, copy, time as _time
+
+import pygame
+
+_state = {"task": None, "delay": 0.0, "flipped": False, "ticked": False, "n": 0}
+
+def _flag_flip(fn):
+    def wrapper(*a, **k):
+        _state["flipped"] = True
+        return fn(*a, **k)
+    return wrapper
+
+pygame.display.flip = _flag_flip(pygame.display.flip)
+pygame.display.update = _flag_flip(pygame.display.update)
+
+class _Clock:
+    """tick() never busy-waits: it banks the frame budget, which the injected
+    loop yield sleeps off cooperatively."""
+    def __init__(self):
+        self._last = pygame.time.get_ticks()
+        self._dt = 0
+    def tick(self, fps=0):
+        now = pygame.time.get_ticks()
+        self._dt, self._last = now - self._last, now
+        _state["ticked"] = True
+        if fps:
+            _state["delay"] = max(0.0, 1.0 / fps - self._dt / 1000.0)
+        return self._dt
+    tick_busy_loop = tick
+    def get_time(self): return self._dt
+    get_rawtime = get_time
+    def get_fps(self): return 1000.0 / self._dt if self._dt else 0.0
+pygame.time.Clock = _Clock
+
+# Pyodide's time.sleep busy-waits the browser main thread. Statement-level
+# sleeps become real awaits via _Awaiter below; banking is the no-freeze
+# fallback for sleeps buried in sync helper functions.
+def _bank(secs):
+    try:
+        _state["delay"] += max(0.0, float(secs))
+    except Exception:
+        pass
+
+def _wait_ms(ms):
+    _bank(ms / 1000.0)
+    return int(ms)
+
+pygame.time.delay = pygame.time.wait = _wait_ms
+_time.sleep = _bank
+
+async def __sleep__(secs):
+    try:
+        secs = max(0.0, float(secs))
+    except Exception:
+        secs = 0.0
+    await asyncio.sleep(secs)
+
+async def __yield__():
+    d, ticked, flipped = _state["delay"], _state["ticked"], _state["flipped"]
+    _state.update(delay=0.0, ticked=False, flipped=False)
+    if d > 0:
+        await asyncio.sleep(d)
+    elif ticked:
+        await asyncio.sleep(0)
+    elif flipped:
+        await asyncio.sleep(1 / 60)       # flip but no tick: default to ~60fps
+    else:
+        _state["n"] += 1
+        if _state["n"] % 256 == 0:        # plain compute loop: yield occasionally
+            await asyncio.sleep(0)
+
+# ---- source transform: plain pygame code -> cooperative async ----
+
+_YIELD = ast.parse("await __yield__()").body[0]
+
+def _shallow(node):
+    """Walk child nodes without crossing into nested function/class scopes."""
+    stack = list(ast.iter_child_nodes(node))
+    while stack:
+        n = stack.pop()
+        yield n
+        if not isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            stack.extend(ast.iter_child_nodes(n))
+
+def _is_gameloop(loop):
+    for n in _shallow(loop):
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute):
+            f = n.func
+            owner = f.value.attr if isinstance(f.value, ast.Attribute) else None
+            if (f.attr in ("flip", "tick", "tick_busy_loop")
+                    or (f.attr, owner) == ("update", "display")
+                    or (f.attr in ("get", "poll", "wait") and owner == "event")):
+                return True
+    return False
+
+def _time_names(tree):
+    """Names the user's code binds to the time module / time.sleep."""
+    mods, sleeps = set(), set()
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Import):
+            mods.update(a.asname or "time" for a in n.names if a.name == "time")
+        elif isinstance(n, ast.ImportFrom) and n.module == "time":
+            sleeps.update(a.asname or "sleep" for a in n.names if a.name == "sleep")
+    return mods, sleeps
+
+class _SyncBarrier(ast.NodeTransformer):
+    """Base for the passes below: never descend into sync defs or classes,
+    where an inserted await would be a syntax error."""
+    def visit_FunctionDef(self, node): return node
+    def visit_ClassDef(self, node): return node
+
+class _Asyncify(_SyncBarrier):
+    """def f(): while ...flip()...  ->  async def f(), remembering names."""
+    def __init__(self):
+        self.converted = set()
+    def visit_FunctionDef(self, node):
+        if any(isinstance(n, ast.While) and _is_gameloop(n) for n in _shallow(node)):
+            node.__class__ = ast.AsyncFunctionDef
+            self.converted.add(node.name)
+        return node
+
+class _Awaiter(_SyncBarrier):
+    """Statement-level rewrites in async contexts:
+       main()                        -> await main()      (converted functions)
+       asyncio.run(x)                -> await x
+       time.sleep(s)                 -> await __sleep__(s)
+       pygame.time.wait|delay(ms)    -> await __sleep__(ms / 1000)"""
+    def __init__(self, converted, time_mods, sleep_names):
+        self.converted, self.time_mods, self.sleep_names = converted, time_mods, sleep_names
+    @staticmethod
+    def _sleep(secs):
+        return ast.Call(func=ast.Name("__sleep__", ast.Load()), args=[secs], keywords=[])
+    def visit_Expr(self, node):
+        self.generic_visit(node)
+        v = node.value
+        if not isinstance(v, ast.Call):
+            return node
+        f, simple = v.func, len(v.args) == 1 and not v.keywords
+        target = None
+        if isinstance(f, ast.Name):
+            if f.id in self.converted:
+                target = v
+            elif simple and f.id in self.sleep_names:
+                target = self._sleep(v.args[0])
+        elif isinstance(f, ast.Attribute):
+            owner = f.value
+            if f.attr == "run" and isinstance(owner, ast.Name) and owner.id == "asyncio" and v.args:
+                target = v.args[0]
+            elif simple and f.attr == "sleep" and isinstance(owner, ast.Name) and owner.id in self.time_mods:
+                target = self._sleep(v.args[0])
+            elif simple and f.attr in ("wait", "delay") and isinstance(owner, ast.Attribute) and owner.attr == "time":
+                target = self._sleep(ast.BinOp(left=v.args[0], op=ast.Div(), right=ast.Constant(1000.0)))
+        if target is not None:
+            node.value = ast.copy_location(ast.Await(value=target), v)
+        return node
+
+class _InjectYield(_SyncBarrier):
+    """Append 'await __yield__()' to every while-body in async contexts."""
+    def visit_While(self, node):
+        self.generic_visit(node)
+        node.body.append(copy.deepcopy(_YIELD))
+        return node
+
+def _transform(src):
+    tree = ast.parse(src)
+    asyncify = _Asyncify()
+    tree = asyncify.visit(tree)
+    tree = _Awaiter(asyncify.converted, *_time_names(tree)).visit(tree)
+    tree = _InjectYield().visit(tree)
+    ast.fix_missing_locations(tree)
+    return compile(tree, "<your code>", "exec", flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
+
+# ---- run management ----
+
+async def _run(src):
+    glb = {"__name__": "__main__", "__yield__": __yield__, "__sleep__": __sleep__,
+           "__builtins__": __builtins__}
+    try:
+        code = _transform(src)
+    except SyntaxError:
+        traceback.print_exc(limit=0)
+        return "error"
+    try:
+        if pygame.get_init():
+            pygame.event.clear()
+        res = eval(code, glb)
+        if asyncio.iscoroutine(res):
+            await res
+        return "ok"
+    except asyncio.CancelledError:
+        return "stopped"
+    except SystemExit:
+        return "exit"
+    except BaseException:
+        traceback.print_exc()
+        return "error"
+
+def _start(src):
+    _stop()
+    _state.update(delay=0.0, flipped=False, ticked=False, n=0)
+    _state["task"] = asyncio.ensure_future(_run(src))
+    return _state["task"]
+
+def _stop():
+    t = _state["task"]
+    if t and not t.done():
+        t.cancel()
+        return True
+    return False
+`;
+
+// ---- shared base64url <-> utf8 (matches Collision Lab's #code= producer) ----
+const b64url = {
+  dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g,"+").replace(/_/g,"/")))),
+};
+function codeFromHash() {
+  try { return location.hash.startsWith("#code=") ? b64url.dec(location.hash.slice(6)) : null; }
+  catch { return null; }
+}
+
+// ---- minimal UI plumbing (editable code, but no examples/branding/demos) ----
+const consoleEl = document.getElementById("console");
+const statusEl  = document.getElementById("status");
+const canvasEl  = document.getElementById("canvas");
+const editorEl  = document.getElementById("code");
+function logLine(text, cls) {
+  const div = document.createElement("div");
+  if (cls) div.className = cls;
+  div.textContent = text;
+  consoleEl.appendChild(div);
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+}
+function clearConsole() { consoleEl.textContent = ""; }
+function setStatus(cls, text) { statusEl.className = cls; statusEl.textContent = text; }
+
+const SRC = codeFromHash();
+editorEl.value = SRC || "# No snippet supplied — type some pygame here and hit Run.\n";
+
+// Tab indents; ⌘/Ctrl+Enter runs — basic editor ergonomics, no CodeMirror needed.
+editorEl.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); run(); return; }
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const s = editorEl.selectionStart, en = editorEl.selectionEnd;
+    editorEl.value = editorEl.value.slice(0, s) + "    " + editorEl.value.slice(en);
+    editorEl.selectionStart = editorEl.selectionEnd = s + 4;
+  }
+});
+
+// ---- pyodide boot (same order/flags as the playground) ----
+const PYODIDE_BASE = "https://cdn.jsdelivr.net/pyodide/v0.27.2/full/";
+let pyodide = null, runTask = null;
+async function boot() {
+  setStatus("boot", "loading Python…");
+  const mod = await import(PYODIDE_BASE + "pyodide.mjs");
+  pyodide = await mod.loadPyodide({ indexURL: PYODIDE_BASE });
+  pyodide.setStdout({ batched: (s) => logLine(s, "out") });
+  pyodide.setStderr({ batched: (s) => logLine(s, "err") });
+  // Register the canvas with SDL BEFORE pygame is imported, and scope SDL's
+  // keyboard capture to the canvas.
+  if (pyodide.canvas && pyodide.canvas.setCanvas2D) pyodide.canvas.setCanvas2D(canvasEl);
+  else pyodide._module.canvas = canvasEl;
+  pyodide.runPython('import os; os.environ["SDL_EMSCRIPTEN_KEYBOARD_ELEMENT"] = "#canvas"');
+  setStatus("boot", "loading pygame…");
+  await pyodide.loadPackage("pygame-ce");
+  await pyodide.runPythonAsync(BOOT_PY);
+  setStatus("ready", "ready");
+}
+const booted = boot().catch((e) => { setStatus("error", "boot failed"); logLine(String(e), "err"); throw e; });
+
+async function run() {
+  const src = editorEl.value;
+  if (!src.trim()) { setStatus("error", "no code"); logLine("Nothing to run — the editor is empty.", "sys"); return; }
+  try { await booted; } catch { return; }
+  clearConsole();
+  canvasEl.focus();
+  const start = pyodide.globals.get("_start");
+  const task = start(src);
+  start.destroy();
+  runTask = task;
+  setStatus("running", "running");
+  task.then((kind) => {
+    if (runTask !== task) return;
+    if (kind === "error") return setStatus("error", "error — see console");
+    setStatus("ready", kind === "stopped" ? "stopped" : "finished");
+    logLine(kind === "stopped" ? "— stopped —" : "— program finished —", "sys");
+  }).catch(() => { if (runTask === task) setStatus("ready", "stopped"); });
+}
+
+document.getElementById("runBtn").addEventListener("click", run);
+document.getElementById("stopBtn").addEventListener("click", () => { if (pyodide) pyodide.runPython("_stop()"); });
+
+booted.then(run).catch(() => {});
+</script>
+</body>
+</html>

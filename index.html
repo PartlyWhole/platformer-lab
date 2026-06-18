@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  @keyframes crtflick { 0%,100%{opacity:.05} 50%{opacity:.10} }
+  @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:.15} }
+  html,body { margin:0; }
+  body { background:#07080f; }
+  ::selection { background:#6ee7a0; color:#07080f; }
+</style>
+</helmet>
+<div style="min-height:100vh; background:radial-gradient(900px 500px at 50% -8%, #131a2e 0%, #0a0c16 55%, #07080f 100%); color:#d8dae5; font-family:'JetBrains Mono',ui-monospace,monospace; padding:38px 18px 90px; position:relative; overflow:hidden;">
+
+  <div style="max-width:1140px; margin:0 auto; position:relative; z-index:2;">
+
+    <!-- ===== HERO ===== -->
+    <header style="border:3px solid #6ee7a0; background:linear-gradient(180deg,#10131f,#0c0e18); box-shadow:10px 10px 0 rgba(0,0,0,.55), 0 0 34px -8px #6ee7a0; padding:30px 26px 26px; position:relative; margin-bottom:40px;">
+      <div style="position:absolute; top:-3px; right:18px; transform:translateY(-50%); background:#6ee7a0; color:#07080f; font-family:'Press Start 2P',monospace; font-size:9px; padding:6px 10px; letter-spacing:.5px;">PYGAME · v2.x</div>
+      <div style="font-family:'Press Start 2P',monospace; font-size:30px; line-height:1.25; color:#eaf6ef; text-shadow:3px 3px 0 #1f7a4d, 6px 6px 0 rgba(0,0,0,.4);">PLATFORMER&nbsp;LAB</div>
+      <p style="margin:18px 0 0; max-width:710px; font-size:14.5px; line-height:1.7; color:#aab0c4;">From a blank window to a playable platformer — <b style="color:#eaf6ef;">one runnable step at a time</b>. Each rung below is a complete program you can <b style="color:#eaf6ef;">run, copy, and tweak</b>; the next rung is the same program plus exactly <b style="color:#eaf6ef;">one new idea</b> (it glows). <a href="https://partlywhole.github.io/collision-lab/" style="color:#6ee7a0; text-decoration:none; border-bottom:1px dashed #2f6a44;">Collision&nbsp;Lab</a> asked “do these overlap?”, <a href="https://partlywhole.github.io/movement-lab/" style="color:#6ee7a0; text-decoration:none; border-bottom:1px dashed #2f6a44;">Movement&nbsp;Lab</a> asked “where next?” — here you put both together and <b style="color:#eaf6ef;">build the thing.</b></p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; font-family:'Press Start 2P',monospace; font-size:8.5px;">
+        <span style="background:#0d1322; border:2px solid #2a3350; color:#8a93ad; padding:8px 11px;">ONE IDEA PER RUNG</span>
+        <span style="background:#0d1322; border:2px solid #2a3350; color:#8a93ad; padding:8px 11px;">THE NEW LINES GLOW</span>
+        <span style="background:#11210f; border:2px solid #2f6a44; color:#9be88f; padding:8px 11px;">▶ RUN EVERY RUNG</span>
+      </div>
+    </header>
+
+    <!-- ACT I -->
+    <div style="display:flex; align-items:center; gap:14px; margin:0 0 26px;">
+      <span style="font-family:'Press Start 2P',monospace; font-size:12px; color:#8fb8ff;">ACT I · MOVEMENT</span>
+      <span style="flex:1; height:2px; background:repeating-linear-gradient(90deg,#2a3350 0 8px,transparent 8px 14px);"></span>
+      <span style="font-size:12px; color:#6a7290;">where is the box next frame?</span>
+    </div>
+    <div data-act="1"></div>
+
+    <!-- ACT II -->
+    <div style="display:flex; align-items:center; gap:14px; margin:46px 0 28px;">
+      <span style="font-family:'Press Start 2P',monospace; font-size:12px; color:#5ad1e8;">ACT II · COLLISION</span>
+      <span style="flex:1; height:2px; background:repeating-linear-gradient(90deg,#2a3350 0 8px,transparent 8px 14px);"></span>
+      <span style="font-size:12px; color:#6a7290;">do these two boxes overlap?</span>
+    </div>
+    <div data-act="2"></div>
+
+    <!-- ACT III -->
+    <div style="display:flex; align-items:center; gap:14px; margin:46px 0 28px;">
+      <span style="font-family:'Press Start 2P',monospace; font-size:12px; color:#b48cff;">ACT III · THE PLATFORMER</span>
+      <span style="flex:1; height:2px; background:repeating-linear-gradient(90deg,#2a3350 0 8px,transparent 8px 14px);"></span>
+      <span style="font-size:12px; color:#6a7290;">put it together and build it</span>
+    </div>
+    <div data-act="3"></div>
+
+    <footer style="border-top:2px dashed #2a3350; margin-top:10px; padding-top:22px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;">
+      <span style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#6a7290;">Three labs, one game loop: <a href="https://partlywhole.github.io/collision-lab/" style="color:#9be88f; text-decoration:none; border-bottom:1px dashed #2f6a44;">overlap</a> · <a href="https://partlywhole.github.io/movement-lab/" style="color:#9be88f; text-decoration:none; border-bottom:1px dashed #2f6a44;">motion</a> · build. Hit <span style="color:#9be88f;">▶ RUN LIVE</span> on any rung.</span>
+      <span style="font-family:'Press Start 2P',monospace; font-size:8px; color:#3f4762;">INSERT COIN</span>
+    </footer>
+
+    <div data-end></div>
+
+  </div>
+
+  <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed; inset:0; z-index:50; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px, transparent 1px, transparent 3px); mix-blend-mode:multiply;"></div>
+  </sc-if>
+  <sc-if value="{{ crt }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed; inset:0; z-index:51; pointer-events:none; background:#7ea0ff; opacity:.06; mix-blend-mode:overlay; animation:crtflick 5s steps(2) infinite;"></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:920},&quot;playgroundUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://partlywhole.github.io/pygame-playground/&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;scanlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;crtFlicker&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      scanlines: this.props.scanlines !== false,
+      crt: this.props.crtFlicker !== false,
+    };
+  }
+
+  componentDidMount() {
+    const RUNNER_URL = "run.html";
+
+    // ===== THE LADDER — injected, verified rung data =====
+    // Each rung: { key, num, title, chip, accent, why, tweak, code }
+    const RUNGS = /*__RUNGS__*/[{"key": "game_loop", "num": 1, "title": "THE GAME LOOP", "chip": "while True", "accent": "#8fb8ff", "why": "Every game is this one loop: handle input, update, draw, repeat at a steady frame rate.", "tweak": "Change clock.tick(60) to tick(10) or change the fill color to see the loop's pulse.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n# The game loop: this shape is every game ever made.\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    screen.fill((10, 11, 20))      # clear the screen each frame\n    pygame.display.flip()          # show what we drew\n    clock.tick(60)                 # wait so we run at 60 frames per second\n"}, {"key": "draw_square", "num": 2, "title": "A SQUARE AT A POSITION", "chip": "x, y", "accent": "#8fb8ff", "why": "A position is just two numbers, and a rectangle is drawn at exactly those numbers.", "tweak": "Edit x and y to move the square, or change the 40s to make it bigger.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2                         # a position is just two numbers\ny = H // 2\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (143, 184, 255), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "velocity", "num": 3, "title": "CONSTANT VELOCITY", "chip": "x += vx", "accent": "#ff8fb8", "why": "Velocity is pixels per frame: add it to the position every frame and the square moves on its own.", "tweak": "Set vx = -4 and start x at W to make it drift the other way.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2                         # a position is just two numbers\ny = H // 2\nvx = 4                             # velocity is pixels per frame\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    x += vx                        # every frame, move by the velocity\n    if x > W:                      # ran off the right edge? wrap to the left\n        x = -40\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (255, 143, 184), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "input", "num": 4, "title": "KEYBOARD INPUT", "chip": "get_pressed()", "accent": "#ff8fb8", "why": "Input sets velocity: the arrow keys decide vx, and the existing x += vx does the moving.", "tweak": "Raise SPEED to 10 for a sprint, or lower it to 1 for a crawl.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2\ny = H // 2\nvx = 0\nSPEED = 4                          # how fast a key press moves us\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()    # input sets velocity\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    else:\n        vx = 0\n\n    x += vx\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (255, 143, 184), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "gravity", "num": 5, "title": "GRAVITY", "chip": "vy += GRAVITY", "accent": "#ff9d6c", "why": "Gravity is constant acceleration: it nudges vy a little more each frame, so the fall speeds up and the path curves.", "tweak": "Make GRAVITY = -1 so the box floats upward instead.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2\ny = 40                             # start high so we can watch it fall\nvx = 0\nvy = 0\nSPEED = 4\nGRAVITY = 1                        # gravity is constant acceleration\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    else:\n        vx = 0\n\n    vy += GRAVITY                  # speed up downward every frame\n    x += vx\n    y += vy                        # the path curves because vy keeps growing\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (255, 157, 108), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "floor", "num": 6, "title": "THE FLOOR", "chip": "y = GROUND", "accent": "#ff9d6c", "why": "A floor is the simplest collision: after moving, clamp y back to a line and zero out the downward speed.", "tweak": "Lower GROUND to 250 so the box lands higher up.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2\ny = 40                             # start high so we can watch it fall\nvx = 0\nvy = 0\nSPEED = 4\nGRAVITY = 1\nGROUND = 400                       # the floor line (top of our box rests here)\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    else:\n        vx = 0\n\n    vy += GRAVITY\n    x += vx\n    y += vy\n\n    if y > GROUND:                 # clamp to the floor line\n        y = GROUND\n        vy = 0\n\n    screen.fill((10, 11, 20))\n    pygame.draw.line(screen, (60, 64, 90), (0, GROUND + 40), (W, GROUND + 40), 2)\n    pygame.draw.rect(screen, (255, 157, 108), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "jump", "num": 7, "title": "JUMP", "chip": "vy = -JUMP", "accent": "#6ee7a0", "why": "A jump is one instant change of velocity, allowed only when the box is resting on the ground.", "tweak": "Bump JUMP to 24 for a higher leap, or remove the on_ground check to allow mid-air jumps.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2\ny = 40\nvx = 0\nvy = 0\nSPEED = 4\nGRAVITY = 1\nGROUND = 400\nJUMP = 16                          # how much upward velocity a jump gives\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:\n            on_ground = (y >= GROUND)       # only jump if resting on the floor\n            if on_ground:\n                vy = -JUMP                  # one instant change of velocity\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    else:\n        vx = 0\n\n    vy += GRAVITY\n    x += vx\n    y += vy\n\n    if y > GROUND:                 # clamp to the floor line\n        y = GROUND\n        vy = 0\n\n    screen.fill((10, 11, 20))\n    pygame.draw.line(screen, (60, 64, 90), (0, GROUND + 40), (W, GROUND + 40), 2)\n    pygame.draw.rect(screen, (110, 231, 160), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "feel", "num": 8, "title": "FRICTION + TERMINAL VEL", "chip": "vx *= K", "accent": "#6ee7a0", "why": "Damping vx gives the box weight so it slides to a stop, and capping vy stops it falling infinitely fast.", "tweak": "Set K = 0.95 for ice-like slide, or K = 0.5 for sticky stops.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nx = W // 2\ny = 40\nvx = 0\nvy = 0\nSPEED = 4\nGRAVITY = 1\nGROUND = 400\nJUMP = 16\nK = 0.8                            # friction: keep 80% of horizontal speed each frame\nMAX_FALL = 14                      # terminal velocity: a cap on falling speed\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:\n            on_ground = (y >= GROUND)       # only jump if resting on the floor\n            if on_ground:\n                vy = -JUMP\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    vx *= K                        # no 'else': decay to a stop instead of snapping to 0\n\n    vy += GRAVITY\n    vy = min(vy, MAX_FALL)         # never fall faster than the cap\n    x += vx\n    y += vy\n\n    if y > GROUND:                 # clamp to the floor line\n        y = GROUND\n        vy = 0\n\n    screen.fill((10, 11, 20))\n    pygame.draw.line(screen, (60, 64, 90), (0, GROUND + 40), (W, GROUND + 40), 2)\n    pygame.draw.rect(screen, (110, 231, 160), (x, y, 40, 40))\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "overlap", "num": 9, "title": "TWO RECTS, ONE TEST", "chip": ".colliderect()", "accent": "#6ee7a0", "why": "Overlap is one call that quietly does four edge comparisons; here it just flips the player's color.", "tweak": "Move the block's position or grow it to 160x160 and watch when the color flips.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nplayer = pygame.Rect(W // 2, H // 2, 40, 40)    # a Rect bundles x, y, w, h\nblock = pygame.Rect(300, 220, 80, 80)           # a fixed obstacle\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        player.x -= SPEED\n    if keys[pygame.K_RIGHT]:\n        player.x += SPEED\n    if keys[pygame.K_UP]:\n        player.y -= SPEED\n    if keys[pygame.K_DOWN]:\n        player.y += SPEED\n\n    hit = player.colliderect(block)             # overlap is a single call\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (90, 100, 130), block)\n    color = (255, 143, 184) if hit else (110, 231, 160)\n    pygame.draw.rect(screen, color, player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "stop_naive", "num": 10, "title": "STOP AT A WALL (naive)", "chip": "undo move", "accent": "#5ad1e8", "why": "Detecting the hit is easy; undoing the whole move is the obvious response but it feels sticky and you cannot slide along the wall.", "tweak": "Walk into the block from the top while pressing sideways and notice you stick instead of sliding.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\nplayer = pygame.Rect(W // 2, H // 2, 40, 40)\nblock = pygame.Rect(300, 220, 80, 80)\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    old_x, old_y = player.x, player.y           # remember where we were\n    if keys[pygame.K_LEFT]:\n        player.x -= SPEED\n    if keys[pygame.K_RIGHT]:\n        player.x += SPEED\n    if keys[pygame.K_UP]:\n        player.y -= SPEED\n    if keys[pygame.K_DOWN]:\n        player.y += SPEED\n\n    if player.colliderect(block):               # naive response: undo the whole move\n        player.x, player.y = old_x, old_y       # ...so you stick and can't slide\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (90, 100, 130), block)\n    pygame.draw.rect(screen, (110, 231, 160), player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "per_axis", "num": 11, "title": "RESOLVE PER AXIS", "chip": "x then y", "accent": "#5ad1e8", "why": "Move and resolve one axis at a time and you can slide along walls and land cleanly, because each axis only snaps against the side it actually approached.", "tweak": "Press into the block from each of its four sides and notice you slide along it instead of sticking.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n\ndef move_and_collide(rect, vx, vy, solids):\n    \"\"\"Move one axis at a time; snap out of anything we hit. Returns on_ground.\"\"\"\n    on_ground = False\n    rect.x += vx                                # move horizontally first\n    for s in solids:\n        if rect.colliderect(s):\n            if vx > 0:\n                rect.right = s.left             # moving right: sit against its left side\n            elif vx < 0:\n                rect.left = s.right             # moving left: sit against its right side\n    rect.y += vy                                # then move vertically\n    for s in solids:\n        if rect.colliderect(s):\n            if vy > 0:\n                rect.bottom = s.top             # falling: land on top\n                on_ground = True\n            elif vy < 0:\n                rect.top = s.bottom             # rising: bonk the ceiling\n    return on_ground\n\n\nplayer = pygame.Rect(W // 2, H // 2, 40, 40)\nblock = pygame.Rect(300, 220, 80, 80)\nsolids = [block]\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    vx = vy = 0\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    if keys[pygame.K_RIGHT]:\n        vx = SPEED\n    if keys[pygame.K_UP]:\n        vy = -SPEED\n    if keys[pygame.K_DOWN]:\n        vy = SPEED\n\n    move_and_collide(player, vx, vy, solids)    # slides along walls now\n\n    screen.fill((10, 11, 20))\n    pygame.draw.rect(screen, (90, 100, 130), block)\n    pygame.draw.rect(screen, (110, 231, 160), player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "many_blocks", "num": 12, "title": "MANY BLOCKS", "chip": "solids = [...]", "accent": "#5ad1e8", "why": "The same per-axis resolver already loops over a list, so it works against any number of rectangles unchanged.", "tweak": "Append another pygame.Rect to the solids list and it just works.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n\ndef move_and_collide(rect, vx, vy, solids):\n    \"\"\"Move one axis at a time; snap out of anything we hit. Returns on_ground.\"\"\"\n    on_ground = False\n    rect.x += vx                                # move horizontally first\n    for s in solids:\n        if rect.colliderect(s):\n            if vx > 0:\n                rect.right = s.left             # moving right: sit against its left side\n            elif vx < 0:\n                rect.left = s.right             # moving left: sit against its right side\n    rect.y += vy                                # then move vertically\n    for s in solids:\n        if rect.colliderect(s):\n            if vy > 0:\n                rect.bottom = s.top             # falling: land on top\n                on_ground = True\n            elif vy < 0:\n                rect.top = s.bottom             # rising: bonk the ceiling\n    return on_ground\n\n\nplayer = pygame.Rect(W // 2, H // 2, 40, 40)\nsolids = [                                      # the same resolver, many rects\n    pygame.Rect(300, 220, 80, 80),\n    pygame.Rect(120, 120, 80, 40),\n    pygame.Rect(120, 320, 200, 40),\n    pygame.Rect(400, 60, 40, 200),\n]\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    vx = vy = 0\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    if keys[pygame.K_RIGHT]:\n        vx = SPEED\n    if keys[pygame.K_UP]:\n        vy = -SPEED\n    if keys[pygame.K_DOWN]:\n        vy = SPEED\n\n    move_and_collide(player, vx, vy, solids)    # loops over every solid\n\n    screen.fill((10, 11, 20))\n    for s in solids:\n        pygame.draw.rect(screen, (90, 100, 130), s)\n    pygame.draw.rect(screen, (110, 231, 160), player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "tilemap", "num": 13, "title": "A LEVEL FROM A MAP", "chip": "\"#\" tiles", "accent": "#ffd166", "why": "Levels are data, not code: build the solids list from a text grid of '#' tiles and the same resolver handles it.", "tweak": "Edit the LEVEL strings, adding or erasing a '#', to redraw the level.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n\ndef move_and_collide(rect, vx, vy, solids):\n    \"\"\"Move one axis at a time; snap out of anything we hit. Returns on_ground.\"\"\"\n    on_ground = False\n    rect.x += vx                                # move horizontally first\n    for s in solids:\n        if rect.colliderect(s):\n            if vx > 0:\n                rect.right = s.left             # moving right: sit against its left side\n            elif vx < 0:\n                rect.left = s.right             # moving left: sit against its right side\n    rect.y += vy                                # then move vertically\n    for s in solids:\n        if rect.colliderect(s):\n            if vy > 0:\n                rect.bottom = s.top             # falling: land on top\n                on_ground = True\n            elif vy < 0:\n                rect.top = s.bottom             # rising: bonk the ceiling\n    return on_ground\n\n\nTILE = 40\nLEVEL = [                                       # a level is just data\n    \"#############\",\n    \"#...........#\",\n    \"#.....###...#\",\n    \"#...........#\",\n    \"#.###.......#\",\n    \"#.......##..#\",\n    \"#...........#\",\n    \"#############\",\n]\nsolids = []\nfor row, line in enumerate(LEVEL):              # build Rects from the '#' tiles\n    for col, ch in enumerate(line):\n        if ch == \"#\":\n            solids.append(pygame.Rect(col * TILE, row * TILE, TILE, TILE))\n\nplayer = pygame.Rect(2 * TILE, 1 * TILE, 30, 30)\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    vx = vy = 0\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    if keys[pygame.K_RIGHT]:\n        vx = SPEED\n    if keys[pygame.K_UP]:\n        vy = -SPEED\n    if keys[pygame.K_DOWN]:\n        vy = SPEED\n\n    move_and_collide(player, vx, vy, solids)\n\n    screen.fill((10, 11, 20))\n    for s in solids:\n        pygame.draw.rect(screen, (90, 100, 130), s)\n    pygame.draw.rect(screen, (255, 209, 102), player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "float_pos", "num": 14, "title": "FLOAT POSITION, INT RECT", "chip": "round(fx)", "accent": "#ffd166", "why": "The Rect can only hold whole pixels, so keep the real position in floats fx/fy and round into the Rect each frame, syncing the float back whenever a wall snaps the Rect.", "tweak": "Set SPEED = 0.6 and confirm the box still creeps along instead of standing still.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n\ndef move_and_collide(rect, fx, fy, vx, vy, solids):\n    \"\"\"Physics is on floats; the Rect is the int snapshot we collide with.\n    Resolve one axis at a time; if a snap moves the Rect, pull the float to match.\n    Returns (fx, fy, on_ground).\"\"\"\n    on_ground = False\n    rect.x = round(fx)                          # int Rect for the x check\n    for s in solids:\n        if rect.colliderect(s):\n            if vx > 0:\n                rect.right = s.left\n            elif vx < 0:\n                rect.left = s.right\n            fx = float(rect.x)                  # a wall moved us: sync the float\n    rect.y = round(fy)                          # int Rect for the y check\n    for s in solids:\n        if rect.colliderect(s):\n            if vy > 0:\n                rect.bottom = s.top\n                on_ground = True\n            elif vy < 0:\n                rect.top = s.bottom\n            fy = float(rect.y)                  # a wall moved us: sync the float\n    return fx, fy, on_ground\n\n\nTILE = 40\nLEVEL = [                                       # a level is just data\n    \"#############\",\n    \"#...........#\",\n    \"#.....###...#\",\n    \"#...........#\",\n    \"#.###.......#\",\n    \"#.......##..#\",\n    \"#...........#\",\n    \"#############\",\n]\nsolids = []\nfor row, line in enumerate(LEVEL):              # build Rects from the '#' tiles\n    for col, ch in enumerate(line):\n        if ch == \"#\":\n            solids.append(pygame.Rect(col * TILE, row * TILE, TILE, TILE))\n\nplayer = pygame.Rect(2 * TILE, 1 * TILE, 30, 30)\nfx, fy = float(player.x), float(player.y)       # the REAL position lives in floats\nSPEED = 4\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n\n    keys = pygame.key.get_pressed()\n    vx = vy = 0\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    if keys[pygame.K_RIGHT]:\n        vx = SPEED\n    if keys[pygame.K_UP]:\n        vy = -SPEED\n    if keys[pygame.K_DOWN]:\n        vy = SPEED\n\n    fx += vx                                    # do the physics on the floats\n    fy += vy                                    # (sub-pixel speeds survive here)\n    fx, fy, on_ground = move_and_collide(player, fx, fy, vx, vy, solids)\n\n    screen.fill((10, 11, 20))\n    for s in solids:\n        pygame.draw.rect(screen, (90, 100, 130), s)\n    pygame.draw.rect(screen, (255, 209, 102), player)\n    pygame.display.flip()\n    clock.tick(60)\n"}, {"key": "platformer", "num": 15, "title": "THE PLATFORMER", "chip": "put it together", "accent": "#b48cff", "why": "Everything you built fits in one small program: a tilemap level, float physics with gravity and terminal velocity, run-with-friction, and a jump gated by the on_ground that the per-axis resolver returns.", "tweak": "Add coyote time: keep a counter set to ~6 while on_ground and decremented otherwise, then allow the jump while that counter > 0.", "code": "import pygame\n\npygame.init()\nW, H = 520, 480\nscreen = pygame.display.set_mode((W, H))\nclock = pygame.time.Clock()\n\n# Retuned from the integer-floor rungs (5-8) for the float-based feel:\n# smaller per-frame steps read smoother now that physics runs on sub-pixel floats.\nGRAVITY = 0.6\nJUMP = 12\nSPEED = 5\nK = 0.8                                         # ground friction\nMAX_FALL = 12                                   # terminal velocity\nTILE = 40\n\n\ndef move_and_collide(rect, fx, fy, vx, vy, solids):\n    \"\"\"Physics is on floats; the Rect is the int snapshot we collide with.\n    Resolve one axis at a time; if a snap moves the Rect, pull the float to match.\n    Returns (fx, fy, on_ground).\"\"\"\n    on_ground = False\n    rect.x = round(fx)                          # int Rect for the x check\n    for s in solids:\n        if rect.colliderect(s):\n            if vx > 0:\n                rect.right = s.left\n            elif vx < 0:\n                rect.left = s.right\n            fx = float(rect.x)                  # a wall moved us: sync the float\n    rect.y = round(fy)                          # int Rect for the y check\n    for s in solids:\n        if rect.colliderect(s):\n            if vy > 0:\n                rect.bottom = s.top\n                on_ground = True\n            elif vy < 0:\n                rect.top = s.bottom\n            fy = float(rect.y)                  # a wall moved us: sync the float\n    return fx, fy, on_ground\n\n\nLEVEL = [                                       # a level is just data\n    \"#############\",\n    \"#...........#\",\n    \"#.....###...#\",\n    \"#...........#\",\n    \"#.###.......#\",\n    \"#.......##..#\",\n    \"#...........#\",\n    \"#############\",\n]\nsolids = []\nfor row, line in enumerate(LEVEL):              # build Rects from the '#' tiles\n    for col, ch in enumerate(line):\n        if ch == \"#\":\n            solids.append(pygame.Rect(col * TILE, row * TILE, TILE, TILE))\n\nplayer = pygame.Rect(2 * TILE, 1 * TILE, 30, 30)\nfx, fy = float(player.x), float(player.y)       # the REAL position lives in floats\nvx = vy = 0.0\non_ground = False                               # set by the resolver, read next frame\n\nwhile True:\n    for event in pygame.event.get():\n        if event.type == pygame.QUIT:\n            raise SystemExit\n        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:\n            if on_ground:                       # jump only when standing on a surface\n                vy = -JUMP\n\n    keys = pygame.key.get_pressed()\n    if keys[pygame.K_LEFT]:\n        vx = -SPEED\n    elif keys[pygame.K_RIGHT]:\n        vx = SPEED\n    vx *= K                                     # friction: slide to a stop\n\n    vy += GRAVITY                               # gravity pulls down every frame\n    vy = min(vy, MAX_FALL)                      # but never faster than the cap\n\n    fx += vx\n    fy += vy\n    fx, fy, on_ground = move_and_collide(player, fx, fy, vx, vy, solids)\n    if on_ground:\n        vy = 0.0                                # stop accumulating fall speed once landed\n\n    screen.fill((10, 11, 20))\n    for s in solids:\n        pygame.draw.rect(screen, (90, 100, 130), s)\n    pygame.draw.rect(screen, (180, 140, 255), player)\n    pygame.display.flip()\n    clock.tick(60)\n\n    # GOING FURTHER:\n    # - coyote time: keep a counter that is reset to ~6 while on_ground and\n    #   decremented otherwise; allow the jump while that counter > 0.\n    # - variable jump height: on KEYUP of SPACE, if vy < -4 set vy = -4.\n    # - a follow camera: subtract the player's position from every draw.\n"}]/*__END_RUNGS__*/;
+
+    // CODE map consumed by the live runner (plain source, no markup)
+    const CODE = {};
+    RUNGS.forEach((r) => { CODE[r.key] = r.code; });
+
+    // ---- syntax highlight (reused from the labs, tokens widened for platformer) ----
+    const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const KW = /^(import|from|as|while|for|in|if|elif|else|def|return|True|False|None|not|and|or|raise|class|is|break|continue|pass)$/;
+    const METH = /^(min|max|round|int|abs|float|range|len|enumerate|tick|flip|fill|rect|circle|line|Vector2|Rect|colliderect|collidelist|move|move_ip|get_pos|get_pressed|set_mode|init|append)$/;
+    function highlight(code) {
+      const re = /(#[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b\d+\.?\d*\b)|([A-Za-z_]\w*)/g;
+      let out = "", last = 0, m;
+      while ((m = re.exec(code))) {
+        out += esc(code.slice(last, m.index));
+        last = re.lastIndex;
+        if (m[1]) out += `<span style="color:#5a6378;font-style:italic">${esc(m[1])}</span>`;
+        else if (m[2]) out += `<span style="color:#9be88f">${esc(m[2])}</span>`;
+        else if (m[3]) out += `<span style="color:#ff9d6c">${esc(m[3])}</span>`;
+        else {
+          const w = m[4];
+          if (KW.test(w)) out += `<span style="color:#ff6ec7">${esc(w)}</span>`;
+          else if (w === "pygame") out += `<span style="color:#5ad1e8">${esc(w)}</span>`;
+          else if (METH.test(w)) out += `<span style="color:#ffd166;font-weight:700">${esc(w)}</span>`;
+          else out += esc(w);
+        }
+      }
+      out += esc(code.slice(last));
+      return out;
+    }
+    const b64url = (s) =>
+      btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+    // ---- per-rung diff: glow the lines that are new vs the previous rung ----
+    function highlightDiff(code, prev) {
+      const counts = {};
+      (prev || "").split("\n").forEach((l) => { const t = l.trim(); if (t) counts[t] = (counts[t] || 0) + 1; });
+      return code.split("\n").map((line) => {
+        const t = line.trim();
+        let isNew = false;
+        if (t && (!counts[t] || counts[t] <= 0)) isNew = true;
+        if (t && counts[t] > 0) counts[t]--;   // consume a matched prev line
+        const inner = highlight(line) || "&nbsp;";
+        if (isNew) return `<span style="display:block; background:color-mix(in srgb, var(--a) 13%, transparent); border-left:3px solid var(--a); margin:0 -14px; padding:0 14px 0 11px;">${inner}</span>`;
+        return `<span style="display:block; border-left:3px solid transparent; margin:0 -14px; padding:0 14px 0 11px;">${inner}</span>`;
+      }).join("");
+    }
+
+    // ---- build the rung panels into their act containers ----
+    const PS = "font-family:'Press Start 2P',monospace;";
+    const pad2 = (n) => String(n).padStart(2, "0");
+    function rungPanel(r, prevCode) {
+      const sec = document.createElement("section");
+      sec.dataset.section = "rung-" + r.key;
+      sec.style.cssText = `--a:${r.accent}; border:3px solid var(--a); background:#10131f; box-shadow:8px 8px 0 rgba(0,0,0,.5), 0 0 24px -10px var(--a); margin-bottom:34px;`;
+      const header = `<div style="display:flex; align-items:center; gap:14px; background:var(--a); color:#07080f; padding:11px 16px;">
+        <span style="${PS} font-size:18px;">${pad2(r.num)}</span>
+        <span style="${PS} font-size:13px; letter-spacing:.5px;">${r.title}</span>
+        <code style="margin-left:auto; background:rgba(7,8,15,.78); color:#0e1322; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px; padding:5px 9px; white-space:nowrap; flex-shrink:0;">${esc(r.chip)}</code>
+      </div>`;
+      const why = `<p style="margin:0 0 16px; font-size:13.5px; line-height:1.65; color:#aab0c4;"><span style="color:var(--a);">why →</span> ${r.why}</p>`;
+      const codePanel = `<div style="display:grid; grid-template-columns:1fr; gap:18px; align-items:start;">
+        <div data-viz style="display:none;"></div>
+        <div style="background:#0a0c16; border:2px solid #1d2233; box-shadow:5px 5px 0 rgba(0,0,0,.4);">
+          <div style="display:flex; align-items:center; gap:8px; background:#0e1322; border-bottom:2px solid #1d2233; padding:8px 12px;">
+            <span style="width:9px;height:9px;background:#ff6e6e;"></span><span style="width:9px;height:9px;background:#ffd166;"></span><span style="width:9px;height:9px;background:var(--a);"></span>
+            <span style="margin-left:6px; font-size:11px; color:#6a7290;">${r.key}.py</span>
+            <button data-run="${r.key}" style="margin-left:auto; ${PS} font-size:8.5px; background:var(--a); color:#07080f; border:none; padding:7px 10px; cursor:pointer; box-shadow:2px 2px 0 rgba(0,0,0,.5);">▶ RUN LIVE</button>
+          </div>
+          <pre data-code="${r.key}" style="margin:0; padding:14px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6; color:#cdd3e6; overflow-x:auto; white-space:pre;"></pre>
+        </div>
+      </div>`;
+      const tweak = `<div style="margin-top:16px; background:#0a0e18; border:2px solid #1c2233; border-left:4px solid var(--a); padding:12px 14px; font-size:13px; line-height:1.6; color:#cdd3e6;"><span style="${PS} font-size:8.5px; color:var(--a); letter-spacing:.5px;">TWEAK →</span>&nbsp; ${r.tweak}</div>`;
+      sec.innerHTML = `${header}<div style="padding:20px;">${why}${codePanel}${tweak}</div>`;
+      // pre-fill the highlighted+diffed code and mark ready so scan() won't overwrite it
+      const pre = sec.querySelector("pre[data-code]");
+      pre.innerHTML = highlightDiff(r.code, prevCode);
+      pre.dataset.ready = "1";
+      return sec;
+    }
+    function renderLadder() {
+      const acts = { 1: document.querySelector('[data-act="1"]'), 2: document.querySelector('[data-act="2"]'), 3: document.querySelector('[data-act="3"]') };
+      if (!acts[1] || !acts[2] || !acts[3]) return;
+      const sorted = RUNGS.slice().sort((a, b) => a.num - b.num);
+      sorted.forEach((r, i) => {
+        const prevCode = i > 0 ? sorted[i - 1].code : r.code;   // rung 1 diffs against itself → no glow
+        const act = r.num <= 8 ? 1 : (r.num <= 12 ? 2 : 3);
+        acts[act].appendChild(rungPanel(r, prevCode));
+      });
+    }
+
+    // ---- inline live runner (reused verbatim from the labs) ----
+    let liveFrame = null, liveKey = null, liveBtn = null, liveWrap = null, liveHiddenViz = null, liveHiddenCode = null;
+    function ensureFrame() {
+      if (liveFrame) return liveFrame;
+      const f = document.createElement("iframe");
+      f.title = "pygame runner";
+      f.setAttribute("allow", "clipboard-write; fullscreen");
+      f.style.cssText = "width:100%; height:560px; border:2px solid #1d2233; border-top:0; display:block; background:#0a0c16; box-sizing:border-box;";
+      liveFrame = f;
+      return f;
+    }
+    function makeWrap() {
+      const w = document.createElement("div");
+      w.style.cssText = "grid-column:1 / -1;";
+      const bar = document.createElement("div");
+      bar.style.cssText = "display:flex; align-items:center; gap:10px; background:#0e1322; border:2px solid #1d2233; padding:7px 12px;";
+      const label = document.createElement("span");
+      label.style.cssText = "font-family:'Press Start 2P',monospace; font-size:8.5px; color:#9be88f; letter-spacing:.5px;";
+      label.textContent = "▶ LIVE · canvas + editable code · click the canvas, then use the keys";
+      const close = document.createElement("button");
+      close.textContent = "✕ SHOW CODE";
+      close.style.cssText = "margin-left:auto; font-family:'Press Start 2P',monospace; font-size:8px; background:#1a1010; color:#ff8f8f; border:1px solid #5a2f2f; padding:7px 9px; cursor:pointer; box-shadow:2px 2px 0 rgba(0,0,0,.5);";
+      close.onclick = () => stopLive();
+      bar.append(label, close);
+      w.append(bar, ensureFrame());
+      return w;
+    }
+    function stopLive() {
+      if (liveFrame) liveFrame.src = "about:blank";
+      if (liveWrap && liveWrap.parentNode) liveWrap.parentNode.removeChild(liveWrap);
+      if (liveHiddenViz) liveHiddenViz.style.display = "";
+      if (liveHiddenCode) liveHiddenCode.style.display = "";
+      if (liveBtn) liveBtn.textContent = "▶ RUN LIVE";
+      liveKey = null; liveBtn = null; liveWrap = null; liveHiddenViz = null; liveHiddenCode = null;
+    }
+    function startLive(key, url, sec, btn) {
+      if (liveKey) stopLive();
+      const codePre = sec.querySelector(`pre[data-code="${key}"]`);
+      const codeCell = codePre.parentNode;
+      const grid = codeCell.closest("div[style*='grid-template-columns']") || codeCell.parentNode;
+      const viz = grid.querySelector("[data-viz]");
+      if (viz) viz.style.display = "none";
+      codeCell.style.display = "none";
+      liveWrap = makeWrap();
+      grid.appendChild(liveWrap);
+      liveFrame.src = url;
+      liveKey = key; liveBtn = btn; liveHiddenViz = viz; liveHiddenCode = codeCell;
+      liveWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // ---- scan: wire the RUN LIVE buttons (and any code panels not pre-filled) ----
+    function scan() {
+      document.querySelectorAll("pre[data-code]").forEach((p) => {
+        if (p.dataset.ready) return; p.dataset.ready = "1";
+        p.innerHTML = highlight(CODE[p.dataset.code] || "");
+      });
+      document.querySelectorAll("button[data-run]").forEach((btn) => {
+        if (btn.dataset.ready) return; btn.dataset.ready = "1";
+        btn.addEventListener("click", () => {
+          const code = CODE[btn.dataset.run]; if (!code) return;
+          const key = btn.dataset.run;
+          if (liveKey === key) { stopLive(); return; }
+          const url = RUNNER_URL + "#code=" + b64url(code);
+          startLive(key, url, btn.closest("[data-section]"), btn);
+        });
+        btn.addEventListener("mouseenter", () => { btn.style.transform = "translate(-1px,-1px)"; btn.style.boxShadow = "3px 3px 0 rgba(0,0,0,.5)"; });
+        btn.addEventListener("mouseleave", () => { btn.style.transform = ""; btn.style.boxShadow = "2px 2px 0 rgba(0,0,0,.5)"; });
+      });
+    }
+
+    renderLadder();
+    scan();
+    this._scanIv = setInterval(scan, 250);
+    setTimeout(() => clearInterval(this._scanIv), 8000);
+  }
+}
+</script>
+</body>
+</html>
